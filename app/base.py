@@ -13,9 +13,14 @@ class MainHandler(tornado.web.RequestHandler):
         self.set_secure_cookie("user", str(uuid.uuid4()))
         self.render("index.html", messages=ChatSocketHandler.cache)
 
+class TalkPair:
+    talkerOne = null
+    talkerTwo = null
+    conversation = []
 
 class ChatSocketHandler(tornado.websocket.WebSocketHandler):
-    waiters = set()
+    lonely = []
+    talkpair = []
     cache = []
     cache_size = 200
 
@@ -26,10 +31,17 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         print self.get_secure_cookie("user")
         print "new client opened"
-        ChatSocketHandler.waiters.add(self)
-
+        self.cookie = self.get_secure_cookie("user")
+        if (len(lonely) > 0):
+            pair = new TalkPair()
+            pair.talkerOne = lonely[0]
+            pair.talkerTwo = self
+            remove_lonely[0]
+        else:
+            lonely.Append(self)
+            
     def on_close(self):
-        ChatSocketHandler.waiters.remove(self)
+        fine_self_and_remove
 
     @classmethod
     def update_cache(cls, chat):
@@ -47,5 +59,9 @@ class ChatSocketHandler(tornado.websocket.WebSocketHandler):
                 logging.error("Error sending message", exc_info=True)
 
     def on_message(self, message):
-        logging.info("got message %r", message)
-        ChatSocketHandler.send_updates(message)
+        if self in lonely:
+            waiter.write_message("you are alone")
+        else:
+            the_pair = get_the_pair
+            the_pair.talkerOne.write_message(message)
+            the_pair.talkerTwo.write_message(message)
